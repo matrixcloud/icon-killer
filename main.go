@@ -9,8 +9,10 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/briandowns/spinner"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -29,6 +31,10 @@ func findDB() (string, error) {
 		re   error
 	)
 
+	s := spinner.New(spinner.CharSets[36], 1000*time.Millisecond)
+	s.Prefix = "Searching database file: "
+	s.Start()
+
 	e := filepath.Walk(BaseDir, func(path string, info os.FileInfo, err error) error {
 		if err == nil && !info.IsDir() && info.Name() == "db" && strings.Contains(path, "com.apple.dock.launchpad") {
 			file = path
@@ -36,6 +42,7 @@ func findDB() (string, error) {
 		}
 		return nil
 	})
+	s.Stop()
 
 	if e != nil {
 		log.Fatal(e)
@@ -118,9 +125,10 @@ func drawUI(db *sql.DB, apps []App) {
 	}
 
 	prompt := &survey.MultiSelect{
-		Message: "Choose the items to remove",
-		Options: titles,
-		Default: titles[0],
+		Message:  "Choose the items to remove",
+		Options:  titles,
+		Default:  titles[0],
+		PageSize: 10,
 	}
 
 	ans := []string{}

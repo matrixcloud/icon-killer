@@ -4,5 +4,6 @@ go 1.14
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.0.8
+	github.com/briandowns/spinner v1.11.1 
 	github.com/mattn/go-sqlite3 v1.14.0
 )
